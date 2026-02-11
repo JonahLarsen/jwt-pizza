@@ -205,6 +205,18 @@ test('login', async ({ page }) => {
   await expect(page.getByRole('link', { name: 'KC' })).toBeVisible();
 });
 
+test('logout', async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('playwriter@jwt.com');
+  await page.getByRole('textbox', { name: 'Email address' }).press('Tab');
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page.getByLabel('Global')).toContainText('KC');
+  await expect(page.locator('#navbar-dark')).toContainText('Logout');
+  await page.getByRole('link', { name: 'Logout' }).click();
+});
+
 test('purchase with login', async ({ page }) => {
   await basicInit(page);
 
