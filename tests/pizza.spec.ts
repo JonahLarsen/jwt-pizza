@@ -14,7 +14,9 @@ test('home page', async ({ page }) => {
 
 async function basicInit(page: Page) {
   let loggedInUser: User | undefined;
-  const validUsers: Record<string, User> = { 'playwriter@jwt.com': { id: '3', name: 'Kai Chen', email: 'playwriter@jwt.com', password: 'a', roles: [{ role: Role.Diner }] } };
+  const validUsers: Record<string, User> = { 'playwriter@jwt.com': { id: '3', name: 'Kai Chen', email: 'playwriter@jwt.com', password: 'a', roles: [{ role: Role.Diner }] },
+                                              'a@jwt.com': { id: '10', name: 'Joe Danger', email: 'a@jwt.com', password: 'admin', roles: [{ role: Role.Admin }] }
+                                            };
 
   // Authorize login/register for the given user
   await page.route('*/**/api/auth', async (route) => {
@@ -221,7 +223,33 @@ test('diner franchiseDashboard', async ({ page }) => {
     await expect(page.getByRole('main')).toContainText('Unleash Your Potential');
     await expect(page.getByRole('main')).toContainText('Are you ready to embark on a journey towards unimaginable wealth? Owning a franchise with JWT Pizza is your ticket to financial success. With our proven business model and strong brand recognition, you have the opportunity to generate substantial revenue. Imagine the thrill of watching your profits soar year after year, as customers flock to your JWT Pizza, craving our mouthwatering creations.');
     
-})
+});
+
+test('admin dashboard', async ({ page }) => {
+  await basicInit(page);
+  await page.goto('http://localhost:5173/');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page.locator('#navbar-dark')).toContainText('Admin');
+  await page.getByRole('link', { name: 'Admin' }).click();
+  await expect(page.getByRole('list')).toContainText('admin-dashboard');
+  await expect(page.locator('h3')).toContainText('Franchises');
+  await expect(page.locator('h2')).toContainText('Mama Ricci\'s kitchen');
+  await expect(page.locator('thead')).toContainText('Franchise');
+  await expect(page.locator('thead')).toContainText('Franchisee');
+  await expect(page.locator('thead')).toContainText('Store');
+  await expect(page.locator('thead')).toContainText('Revenue');
+  await expect(page.locator('thead')).toContainText('Action');
+  await expect(page.getByRole('table')).toContainText('Close');
+  await expect(page.getByRole('textbox', { name: 'Filter franchises' })).toBeVisible();
+  await expect(page.locator('tfoot')).toContainText('Submit');
+  await expect(page.getByRole('button', { name: '»' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '«' })).toBeVisible();
+  await expect(page.getByRole('main')).toContainText('Add Franchise');
+});
 
 test('login', async ({ page }) => {
   await basicInit(page);
