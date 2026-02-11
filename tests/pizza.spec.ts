@@ -106,15 +106,27 @@ async function basicInit(page: Page) {
     await route.fulfill({ json: franchiseRes });
   });
 
-  // Order a pizza.
+  // Order a pizza or get orders.
   await page.route('*/**/api/order', async (route) => {
-    const orderReq = route.request().postDataJSON();
-    const orderRes = {
-      order: { ...orderReq, id: 23 },
-      jwt: 'eyJpYXQ',
-    };
-    expect(route.request().method()).toBe('POST');
-    await route.fulfill({ json: orderRes });
+    const method = route.request().method();
+    if (method === 'POST') {
+      const orderReq = route.request().postDataJSON();
+      const orderRes = {
+        order: { ...orderReq, id: 23 },
+        jwt: 'eyJpYXQ',
+      };
+      expect(route.request().method()).toBe('POST');
+      await route.fulfill({ json: orderRes });
+    } else if (method === 'GET') {
+      const orderRes = {
+        dinerId: 2,
+        orders: [],
+        page: 1
+      }
+      expect(route.request().method()).toBe('GET');
+      await route.fulfill({ json: orderRes });
+    }
+    
   });
 
   await page.goto('/');
@@ -137,6 +149,22 @@ test('register', async ({ page }) => {
     await page.getByRole('button', { name: 'Register' }).click();
     await expect(page.getByRole('link', { name: 'tg' })).toBeVisible();
     await expect(page.locator('#navbar-dark')).toContainText('Logout');
+});
+
+test('view diner dashboard', async ({ page }) => {
+  await basicInit(page);
+  await page.goto('http://localhost:5173/');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('playwriter@jwt.com');
+  await page.getByText('Email addressPasswordLoginAre').click();
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await page.getByRole('link', { name: 'KC' }).click();
+  await expect(page.getByRole('heading')).toContainText('Your pizza kitchen');
+  await expect(page.getByRole('main')).toContainText('name: Kai Chenemail: playwriter@jwt.comrole: dinerHow have you lived this long without having a pizza? Buy one now!');
+  await expect(page.getByRole('img', { name: 'Employee stock photo' })).toBeVisible();
+  await expect(page.getByRole('list')).toContainText('diner-dashboard');
 });
 
 test('view about', async ({ page }) => {
@@ -206,15 +234,19 @@ test('login', async ({ page }) => {
 });
 
 test('logout', async ({ page }) => {
+  await basicInit(page);
   await page.goto('http://localhost:5173/');
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Email address' }).fill('playwriter@jwt.com');
   await page.getByRole('textbox', { name: 'Email address' }).press('Tab');
   await page.getByRole('textbox', { name: 'Password' }).fill('a');
+  await page.getByRole('textbox', { name: 'Password' }).press('Tab');
   await page.getByRole('button', { name: 'Login' }).click();
   await expect(page.getByLabel('Global')).toContainText('KC');
   await expect(page.locator('#navbar-dark')).toContainText('Logout');
   await page.getByRole('link', { name: 'Logout' }).click();
+  await expect(page.locator('#navbar-dark')).toContainText('Login');
+  await expect(page.locator('#navbar-dark')).toContainText('Register');
 });
 
 test('purchase with login', async ({ page }) => {
