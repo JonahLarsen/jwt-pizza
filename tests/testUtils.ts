@@ -68,6 +68,7 @@ export async function basicInit(page: Page) {
         roles: request.roles,
         token: "abcdef"
     }
+    await route.fulfill({json: updateRes});
   })
 
   // A standard menu
