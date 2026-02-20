@@ -96,3 +96,4 @@ test('updateUserAsAdmin', async ({ page }) => {
 
   await expect(page.getByRole('main')).toContainText('newEmailer@jwt.com');
 });
+
