@@ -159,9 +159,10 @@ export default function AdminDashboard(props: Props) {
                           <tbody key={findex} className="divide-y divide-gray-200">
                             <tr className="border-neutral-500 border-t-2">
                               <td className="text-start px-2 whitespace-nowrap text-l font-mono text-orange-600">{user.name}</td>
-                              <td className="text-start px-2 whitespace-nowrap text-sm font-normal text-gray-800" colSpan={3}>
+                              <td className="text-start px-2 whitespace-nowrap text-sm font-normal text-gray-800" colSpan={1}>
                                 {user.email}
                               </td>
+                              <td className="text-start px-2 whitespace-nowrap text-end font-normal text-gray-800" colSpan={1}>{user.roles? user.roles[0].role : ''}</td>
                               <td className="px-6 py-1 whitespace-nowrap text-end text-sm font-medium">
                                 <button type="button" className="px-2 py-1 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-1 border-orange-400 text-orange-400  hover:border-orange-800 hover:text-orange-800" onClick={() => {}}>
                                   <TrashIcon />
@@ -192,7 +193,7 @@ export default function AdminDashboard(props: Props) {
                       <tfoot>
                         <tr>
                           <td className="px-1 py-1">
-                            <input type="text" ref={filterUserRef} name="filterFranchise" placeholder="Filter franchises" className="px-2 py-1 text-sm border border-gray-300 rounded-lg" />
+                            <input type="text" ref={filterUserRef} name="filterFranchise" placeholder="Filter users" className="px-2 py-1 text-sm border border-gray-300 rounded-lg" />
                             <button type="submit" className="ml-2 px-2 py-1 text-sm font-semibold rounded-lg border border-orange-400 text-orange-400 hover:border-orange-800 hover:text-orange-800" onClick={filterUsers}>
                               Submit
                             </button>
@@ -201,7 +202,7 @@ export default function AdminDashboard(props: Props) {
                             <button className="w-12 p-1 text-sm font-semibold rounded-lg border border-transparent bg-white text-grey border-grey m-1 hover:bg-orange-200 disabled:bg-neutral-300 " onClick={() => setUserPage(userPage - 1)} disabled={userPage <= 0}>
                               «
                             </button>
-                            <button className="w-12 p-1 text-sm font-semibold rounded-lg border border-transparent bg-white text-grey border-grey m-1 hover:bg-orange-200 disabled:bg-neutral-300" onClick={() => setFranchisePage(userPage + 1)} disabled={!userList.more}>
+                            <button className="w-12 p-1 text-sm font-semibold rounded-lg border border-transparent bg-white text-grey border-grey m-1 hover:bg-orange-200 disabled:bg-neutral-300" onClick={() => setUserPage(userPage + 1)} disabled={!userList.more}>
                               »
                             </button>
                           </td>
