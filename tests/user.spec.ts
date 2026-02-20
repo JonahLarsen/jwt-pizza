@@ -1,4 +1,5 @@
 import { test, expect } from 'playwright-test-coverage';
+import { basicInit } from './testUtils';
 
 test('updateUser', async ({ page }) => {
   const email = `user${Math.floor(Math.random() * 10000)}@jwt.com`;
