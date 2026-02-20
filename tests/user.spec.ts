@@ -48,3 +48,27 @@ test('updateUser', async ({ page }) => {
 
   await expect(page.getByRole('main')).toContainText('pizza dinerx');
 });
+
+test('updateUserChangeEmail', async ({ page }) => {
+  basicInit(page);
+  const email = 'updater@jwt.com';
+  await page.getByRole('link', { name: 'Register' }).click();
+  await page.getByRole('textbox', { name: 'Full name' }).fill('Bob Smith');
+  await page.getByRole('textbox', { name: 'Email address' }).fill(email);
+  await page.getByRole('textbox', { name: 'Password' }).fill('diner');
+  await page.getByRole('button', { name: 'Register' }).click();
+
+  await page.getByRole('link', { name: 'bs' }).click();
+
+  await expect(page.getByRole('main')).toContainText('Bob Smith');
+
+  await page.getByRole('button', { name: 'Edit' }).click();
+  await expect(page.locator('h3')).toContainText('Edit user');
+  await page.locator('input[type="email"]').click();
+  await page.locator('input[type="email"]').fill('newEmailer@jwt.com');
+  await page.getByRole('button', { name: 'Update' }).click();
+
+  await page.waitForSelector('[role="dialog"].hidden', { state: 'attached' });
+
+  await expect(page.getByRole('main')).toContainText('newEmailer@jwt.com');
+});
