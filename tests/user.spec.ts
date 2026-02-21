@@ -98,16 +98,25 @@ test('updateUserAsAdmin', async ({ page }) => {
 });
 
 test('listUsers', async ({ page }) => {
-  await page.goto('http://localhost:5173/');
+  basicInit(page);
+  // await page.goto('http://localhost:5173/');
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
   await page.getByRole('textbox', { name: 'Password' }).click();
   await page.getByRole('textbox', { name: 'Password' }).fill('admin');
   await page.getByRole('button', { name: 'Login' }).click();
   await page.getByRole('link', { name: 'Admin' }).click();
-  await expect(page.getByRole('main')).toContainText('Users');
-  await expect(page.getByRole('main')).toContainText('Name');
-  await expect(page.getByRole('main')).toContainText('Email');
-  await expect(page.getByRole('main')).toContainText('Role');
-  await expect(page.getByRole('main')).toContainText('Action');
+  await expect(page.locator('[id="users=heading"]')).toContainText('Users');
+  await expect(page.locator('#users-header')).toContainText('Name');
+  await expect(page.locator('#users-header')).toContainText('Email');
+  await expect(page.locator('#users-header')).toContainText('Role');
+  await expect(page.locator('#users-header')).toContainText('Action');
+  await expect(page.locator('#users-table')).toContainText('Joe Danger');
+  await expect(page.locator('#users-table')).toContainText('a@jwt.com');
+  await expect(page.locator('#users-table')).toContainText('admin');
+  await expect(page.locator('#users-table')).toContainText('Delete');
+  await expect(page.locator('#users-tfoot')).toContainText('Submit');
+  await expect(page.getByRole('textbox', { name: 'Filter users' })).toBeVisible();
+  await expect(page.locator('#users-tfoot').getByRole('button', { name: '»' })).toBeVisible();
+  await expect(page.locator('#users-tfoot')).toContainText('»');
 });

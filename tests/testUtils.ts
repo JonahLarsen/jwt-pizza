@@ -133,6 +133,25 @@ export async function basicInit(page: Page) {
     }
   });
 
+  await page.route(/\/api\/user(\?.*)?$/, async (route) => {
+    const method = route.request().method();
+    if (method === 'GET') {
+      const userRes = {
+        users: [
+          {
+            id: 1,
+            name: "Joe Danger",
+            email: "a@jwt.com",
+            roles: [
+              {role: "admin"}
+            ]
+          }
+        ]
+      }
+      await route.fulfill({ json: userRes });
+    }
+  })
+
   // Order a pizza or get orders.
   await page.route('*/**/api/order', async (route) => {
     const method = route.request().method();
