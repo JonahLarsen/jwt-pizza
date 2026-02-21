@@ -145,10 +145,28 @@ export async function basicInit(page: Page) {
             roles: [
               {role: "admin"}
             ]
+          },
+          {
+            id: 2,
+            name: "testfordelete",
+            email: "testfordelete@jwt.com",
+            roles: [
+              {role: "diner"}
+            ]
           }
         ]
       }
       await route.fulfill({ json: userRes });
+    }
+  });
+
+  await page.route(/\/api\/user\/\d+/, async (route) => {
+    const method = route.request().method();
+    if (method === 'DELETE') {
+      const deleteRes = {
+        message: "user deleted"
+      }
+      await route.fulfill({ json: deleteRes });
     }
   })
 
