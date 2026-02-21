@@ -97,3 +97,17 @@ test('updateUserAsAdmin', async ({ page }) => {
   await expect(page.getByRole('main')).toContainText('newEmailer@jwt.com');
 });
 
+test('listUsers', async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin');
+  await page.getByRole('button', { name: 'Login' }).click();
+  await page.getByRole('link', { name: 'Admin' }).click();
+  await expect(page.getByRole('main')).toContainText('Users');
+  await expect(page.getByRole('main')).toContainText('Name');
+  await expect(page.getByRole('main')).toContainText('Email');
+  await expect(page.getByRole('main')).toContainText('Role');
+  await expect(page.getByRole('main')).toContainText('Action');
+});

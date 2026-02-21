@@ -255,18 +255,18 @@ test('admin dashboard', async ({ page }) => {
   await expect(page.locator('#navbar-dark')).toContainText('Admin');
   await page.getByRole('link', { name: 'Admin' }).click();
   await expect(page.getByRole('list')).toContainText('admin-dashboard');
-  await expect(page.locator('h3')).toContainText('Franchises');
+  await expect(page.locator('#franchises-heading')).toContainText('Franchises');
   await expect(page.locator('h2')).toContainText('Mama Ricci\'s kitchen');
-  await expect(page.locator('thead')).toContainText('Franchise');
-  await expect(page.locator('thead')).toContainText('Franchisee');
-  await expect(page.locator('thead')).toContainText('Store');
-  await expect(page.locator('thead')).toContainText('Revenue');
-  await expect(page.locator('thead')).toContainText('Action');
-  await expect(page.getByRole('table')).toContainText('Close');
+  await expect(page.locator('#franchises-header')).toContainText('Franchise');
+  await expect(page.locator('#franchises-header')).toContainText('Franchisee');
+  await expect(page.locator('#franchises-header')).toContainText('Store');
+  await expect(page.locator('#franchises-header')).toContainText('Revenue');
+  await expect(page.locator('#franchises-header')).toContainText('Action');
+  await expect(page.locator('#franchises-table')).toContainText('Close');
   await expect(page.getByRole('textbox', { name: 'Filter franchises' })).toBeVisible();
-  await expect(page.locator('tfoot')).toContainText('Submit');
-  await expect(page.getByRole('button', { name: '»' })).toBeVisible();
-  await expect(page.getByRole('button', { name: '«' })).toBeVisible();
+  await expect(page.locator('#franchises-tfoot')).toContainText('Submit');
+  await expect(page.locator('#franchises-back')).toBeVisible();
+  await expect(page.locator('#franchises-forward')).toBeVisible();
   await expect(page.getByRole('main')).toContainText('Add Franchise');
 });
 
