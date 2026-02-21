@@ -3,7 +3,7 @@ import { basicInit } from './testUtils';
 import { Role } from '../src/service/pizzaService';
 
 test('updateUser', async ({ page }) => {
-  basicInit(page);
+  await basicInit(page);
   const email = 'updater@jwt.com';
   // await page.goto('/');
   await page.getByRole('link', { name: 'Register' }).click();
@@ -50,7 +50,7 @@ test('updateUser', async ({ page }) => {
 });
 
 test('updateUserChangeEmail', async ({ page }) => {
-  basicInit(page);
+  await basicInit(page);
   const email = 'updater@jwt.com';
   await page.getByRole('link', { name: 'Register' }).click();
   await page.getByRole('textbox', { name: 'Full name' }).fill('Bob Smith');
@@ -74,7 +74,7 @@ test('updateUserChangeEmail', async ({ page }) => {
 });
 
 test('updateUserAsAdmin', async ({ page }) => {
-  basicInit(page);
+  await basicInit(page);
   const email = 'a@jwt.com';
   await page.getByRole('link', { name: 'Register' }).click();
   await page.getByRole('textbox', { name: 'Full name' }).fill('Joe Danger');
@@ -98,7 +98,7 @@ test('updateUserAsAdmin', async ({ page }) => {
 });
 
 test('listUsers', async ({ page }) => {
-  basicInit(page);
+  await basicInit(page);
   // await page.goto('http://localhost:5173/');
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Email address' }).fill('a@jwt.com');
@@ -106,7 +106,7 @@ test('listUsers', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Password' }).fill('admin');
   await page.getByRole('button', { name: 'Login' }).click();
   await page.getByRole('link', { name: 'Admin' }).click();
-  await expect(page.locator('[id="users=heading"]')).toContainText('Users');
+  await expect(page.locator('[id="users-heading"]')).toContainText('Users');
   await expect(page.locator('#users-header')).toContainText('Name');
   await expect(page.locator('#users-header')).toContainText('Email');
   await expect(page.locator('#users-header')).toContainText('Role');
@@ -122,7 +122,16 @@ test('listUsers', async ({ page }) => {
 });
 
 test('deleteUser', async ({ page }) => {
-  await page.goto('http://localhost:5173/');
+  await basicInit(page);
+  await page.route(/\/api\/user\/\d+/, async (route) => {
+    const method = route.request().method();
+    if (method === 'DELETE') {
+      const deleteRes = {
+        message: "user deleted"
+      }
+      await route.fulfill({ json: deleteRes });
+    }
+  });
   await page.getByRole('link', { name: 'Register' }).click();
   await page.getByRole('textbox', { name: 'Full name' }).fill('testfordelete');
   await page.getByRole('textbox', { name: 'Email address' }).click();
@@ -136,11 +145,29 @@ test('deleteUser', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Password' }).click();
   await page.getByRole('textbox', { name: 'Password' }).fill('admin');
   await page.getByRole('button', { name: 'Login' }).click();
+  await page.route(/\/api\/user(\?.*)?$/, async (route) => {
+    const method = route.request().method();
+    if (method === 'GET') {
+      const userRes = {
+        users: [
+          {
+            id: 2,
+            name: "testfordelete",
+            email: "testfordelete@jwt.com",
+            roles: [
+              {role: "diner"}
+            ]
+          }
+        ]
+      }
+      await route.fulfill({ json: userRes });
+    }
+  });
   await page.getByRole('link', { name: 'Admin' }).click();
   await page.getByRole('textbox', { name: 'Filter users' }).click();
   await page.getByRole('textbox', { name: 'Filter users' }).fill('testfordel');
   await page.locator('#users-tfoot').getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('#users-table')).toContainText('testfordelete');
-  await page.getByRole('button', { name: 'Delete' }).click();
+  await page.locator('#users-table').getByRole('button', { name: 'Delete' }).click();
   await expect(page.locator('#users-header')).toContainText('Name');
 })

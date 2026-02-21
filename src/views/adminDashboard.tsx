@@ -149,7 +149,7 @@ export default function AdminDashboard(props: Props) {
         <div>
           <Button className="w-36 text-xs sm:text-sm sm:w-64" title="Add Franchise" onPress={createFranchise} />
         </div>
-        <h3 id="users=heading" className="text-neutral-100 text-xl">Users</h3>
+        <h3 id="users-heading" className="text-neutral-100 text-xl">Users</h3>
         <div className="bg-neutral-100 overflow-clip my-4">
           <div className="flex flex-col">
             <div className="-m-1.5 overflow-x-auto">

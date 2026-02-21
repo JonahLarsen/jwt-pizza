@@ -160,16 +160,6 @@ export async function basicInit(page: Page) {
     }
   });
 
-  await page.route(/\/api\/user\/\d+/, async (route) => {
-    const method = route.request().method();
-    if (method === 'DELETE') {
-      const deleteRes = {
-        message: "user deleted"
-      }
-      await route.fulfill({ json: deleteRes });
-    }
-  })
-
   // Order a pizza or get orders.
   await page.route('*/**/api/order', async (route) => {
     const method = route.request().method();
